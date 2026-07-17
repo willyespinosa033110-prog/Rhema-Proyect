@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Un Versículo Para Ti</title>
+<style>
+  :root {
+    --bg: #1a120b;
+    --bg-soft: #2b1d10;
+    --gold: #d9a75c;
+    --gold-soft: #a67c3d;
+    --text: #f0e4d3;
+    --text-dim: #b8a68f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: radial-gradient(ellipse at top, var(--bg-soft), var(--bg) 70%);
+    color: var(--text);
+    font-family: Georgia, 'Times New Roman', serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .container {
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: normal;
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,106,0.25);
+    border-radius: 4px;
+    padding: 16px;
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  textarea::placeholder { color: var(--text-dim); }
+
+  button {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  button:hover {
+    background: var(--gold);
+    color: var(--bg);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .cargando {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 20px;
+    display: none;
+  }
+
+  .cargando.visible { display: block; }
+
+  .error {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #c9756a;
+    margin-top: 20px;
+    display: none;
+  }
+
+  .error.visible { display: block; }
+
+  .reflexion-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    text-align: center;
+    margin-top: 22px;
+    margin-bottom: 6px;
+  }
+
+  .reflexion {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 0;
+  }
+
+  #resultado {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(201,168,106,0.2);
+    display: none;
+  }
+
+  #resultado.visible {
+    display: block;
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .cita {
+    font-size: 22px;
+    line-height: 1.6;
+    color: var(--text);
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .referencia {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--gold);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #resultado.visible { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="eyebrow">Un momento a solas</div>
+  <h1>Cuéntame qué llevas encima</h1>
+  <p class="subtitle">Escribe lo que sientes o lo que te preocupa. No hay juicio aquí, solo una palabra para reflexionar.</p>
+
+  <textarea id="entrada" placeholder="Por ejemplo: siento miedo por el futuro, estoy cansado, no sé qué decisión tomar..."></textarea>
+  <button id="boton" onclick="buscarVersiculo()">Recibir un versículo</button>
+
+  <p class="cargando" id="cargando">Buscando la palabra que necesitas leer...</p>
+  <p class="error" id="error">Hubo un problema conectando. Intenta de nuevo en un momento.</p>
+
+  <div id="resultado">
+    <p class="cita" id="cita"></p>
+    <p class="referencia" id="referencia"></p>
+    <p class="reflexion-label">Cómo entenderlo</p>
+    <p class="reflexion" id="reflexion"></p>
+  </div>
+</div>
+
+<script>
+  // Guardamos las referencias ya mostradas en esta sesión para pedirle
+  // a la IA que no repita el mismo versículo dos veces.
+  let versiculosUsados = [];
+
+  async function buscarVersiculo() {
+    const entrada = document.getElementById("entrada").value.trim();
+    if (!entrada) return;
+
+    const boton = document.getElementById("boton");
+    const cargando = document.getElementById("cargando");
+    const error = document.getElementById("error");
+    const resultado = document.getElementById("resultado");
+
+    boton.disabled = true;
+    cargando.classList.add("visible");
+    error.classList.remove("visible");
+    resultado.classList.remove("visible");
+
+    try {
+      // Ojo: ahora llamamos a NUESTRO propio servidor (api/versiculo.js),
+      // no directo a Anthropic. Nuestro servidor esconde la clave secreta.
+      const response = await fetch("/api/versiculo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entrada, versiculosUsados })
+      });
+
+      if (!response.ok) throw new Error("Respuesta no válida del servidor");
+
+      const parsed = await response.json();
+
+      document.getElementById("cita").textContent = `"${parsed.texto}"`;
+      document.getElementById("referencia").textContent = parsed.ref;
+      document.getElementById("reflexion").textContent = parsed.reflexion;
+
+      versiculosUsados.push(parsed.ref);
+
+      resultado.classList.add("visible");
+    } catch (e) {
+      console.error("Error:", e);
+      error.classList.add("visible");
+    } finally {
+      boton.disabled = false;
+      cargando.classList.remove("visible");
+    }
+  }
+</script>
+
+</body>
+</html>
